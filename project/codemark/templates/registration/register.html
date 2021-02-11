@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% block title %} Register {% endblock %}
+{% block content %}
+<section class="hero is-fullheight">
+  <div class="hero-body">
+    <div class="container">
+      <div class="columns is-multiline is-centered">
+        <div class="column is-5-tablet is-5-desktop is-5-widescreen has-text-centered">
+          <h3 class="title has-text-centered">Register</h3>
+        </div>
+      </div>
+      <div class="columns is-multiline is-centered">
+        <div class="column is-5">
+          <div class="box">
+            <form action="{% url 'register' %}" method="post" id>
+              {% csrf_token %}
+              <div class="field">
+                {% for field in form %}
+                <label class="label">{{ field.label_tag }}</label>
+                {% if field.errors %}
+                <div class="control">
+                  {{ field|add_class:'input is-danger' }}
+                </div>
+                {% for error in field.errors %}
+                <p class="help is-danger">{{ error }}</li>
+                  {% endfor %}
+                  {% else %}
+                  <div class="control">
+                    {{ field|add_class:'input' }}
+                  </div>
+                  {% endif %}
+                  {% endfor %}
+              </div>
+              <div class="field">
+                <input type="submit" class="button is-success" value="Register" />
+                <input type="hidden" name="next" value="{{ request.GET.next }}" />
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+</section>
+{% endblock %}

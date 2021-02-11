@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% block title %} Login {% endblock %}
+{% block content %}
+<section class="hero is-fullheight">
+  <div class="hero-body">
+    <div class="container">
+      <div class="columns is-multiline is-centered">
+        <div class="column is-5 has-text-centered">
+          <h3 class="title has-text-centered">Login</h3>
+        </div>
+      </div>
+      <div class="columns is-multiline is-centered">
+        <div class="column is-5">
+          <div class="box">
+            {% if form.non_field_errors %}
+            <article class="message is-danger" id="errors">
+              <div class="message-header">
+                <p>Error</p>
+                <button class="delete" aria-label="delete" onclick="hideErrors()"></button>
+              </div>
+              <div class="message-body">{{ form.non_field_errors }}</div>
+            </article>
+            {% endif %}
+            <form action="{% url 'login' %}" method="post" id>
+              {% csrf_token %}
+              <div class="field">
+                {% for field in form %}
+                <label class="label">{{ field.label_tag }}</label>
+                <div class="control">{{ field|add_class:'input' }}</div>
+                {% endfor %}
+              </div>
+              <div class="field">
+                <input type="submit" class="button is-success" value="Login" />
+                <a href="{% url 'register' %}" class="button is-link">Register</a>
+                <input type="hidden" name="next" value="{{ request.GET.next }}" />
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+</section>
+{% endblock %} {% block scripts %}
+<script>
+  function hideErrors() {
+    // Get errors HTML element
+    var x = document.getElementById("errors");
+    // Disable display of errors HTML element
+    x.style.display = "none";
+  }
+</script>
+{% endblock %}

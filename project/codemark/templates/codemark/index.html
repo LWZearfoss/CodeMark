@@ -1,0 +1,11 @@
+{% extends "codemark/base.html" %}
+{% block title %} CodeMark {% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container">
+    <h1 class="title">
+      Hello {{ request.user }}
+    </h1>
+  </div>
+</section>
+{% endblock %}
