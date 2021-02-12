@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %} {{ status }} {% endblock %}
+{% block content %}
+<section class="hero has-text-centered is-fullheight">
+  <div class="hero-body">
+    <div class="container">
+      <div class="columns is-multiline is-centered">
+        <div class="column is-5">
+          <div class="notification is-danger is-light my-1">
+            <strong>{{ status }}</strong>
+            <br></br>
+            {{ msg }}
+          </div>
+          <a href="{% url 'login' %}" class="button is-danger is-fullwidth">Back</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+</section>
+{% endblock %}f

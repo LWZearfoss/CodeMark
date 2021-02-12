@@ -33,7 +33,8 @@
                   {% endfor %}
               </div>
               <div class="field">
-                <input type="submit" class="button is-success" value="Register" />
+                <input type="submit" class="button is-primary" value="Register" />
+                <a href="{% url 'login' %}" class="button is-link">Back</a>
                 <input type="hidden" name="next" value="{{ request.GET.next }}" />
               </div>
             </form>

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %} Account Activation {% endblock %}
+{% block content %}
+<section class="hero has-text-centered is-fullheight">
+  <div class="hero-body">
+    <div class="container">
+      <div class="columns is-multiline is-centered">
+        <div class="column is-5">
+          <div class="notification is-warning is-light my-1">
+            <strong>Activate Your Account</strong>
+            <br></br>
+            You will receive an email message to activate your account. You will be unable to log in until your email is
+            verified.
+          </div>
+          <a href="{% url 'login' %}" class="button is-warning is-fullwidth">Back</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
+from verify_email.email_handler import send_verification_email
 from .forms import RegisterForm
 
 def logout_view(request):
@@ -11,8 +12,8 @@ def register_view(request):
     if request.method == "POST":
         form = RegisterForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect("/login/")
+            send_verification_email(request, form)
+            return render(request, 'activation/notify.html')
     else:
         form = RegisterForm()
     context = {

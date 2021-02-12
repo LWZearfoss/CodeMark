@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %} Account Activation {% endblock %}
+{% block content %}
+<section class="hero has-text-centered is-fullheight">
+  <div class="hero-body">
+    <div class="container">
+      <div class="columns is-multiline is-centered">
+        <div class="column is-5">
+          <div class="notification is-link is-light my-1">
+            <strong>Greetings!</strong>
+            <br></br>
+            You received this message because you attempted to make an account on CodeMark. Please click on the link
+            below to verify the email and activate your account.
+          </div>
+          <a href="{{ link }}" class="button is-link is-fullwidth">Verify</a>
+          <p class="help">*** This is an automatically generated email, please do not reply ***</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+</section>
+{% endblock %}
