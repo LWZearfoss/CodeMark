@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %} Reset Password {% endblock %}
+{% block content %}
+<section class="hero has-text-centered is-fullheight">
+  <div class="hero-body">
+    <div class="container">
+      <div class="columns is-multiline is-centered">
+        <div class="column is-5">
+          <div class="notification is-warning is-light my-1">
+            <strong>Email Sent</strong>
+            <br></br>
+            We've emailed you instructions for resetting your password. If an account exists with the email you entered,
+            you should receive them shortly.
+            <br></br>
+            If you don't receive an email, please make sure you've entered the address you registered with and check
+            your spam folder.
+          </div>
+          <a href="{% url 'login' %}" class="button is-warning is-fullwidth">Back</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+</section>
+{% endblock %}

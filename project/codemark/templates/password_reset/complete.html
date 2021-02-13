@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %} Reset Password {% endblock %}
+{% block content %}
+<section class="hero has-text-centered is-fullheight">
+  <div class="hero-body">
+    <div class="container">
+      <div class="columns is-multiline is-centered">
+        <div class="column is-5">
+          <div class="notification is-success is-light my-1">
+            <strong>Password Reset!</strong>
+            <br></br>
+            Your password has been successfully reset. You may now log in with your credentials.
+          </div>
+          <a href="{% url 'login' %}" class="button is-success is-fullwidth">Login</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+</section>
+{% endblock %}f

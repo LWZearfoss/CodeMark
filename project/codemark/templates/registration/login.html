@@ -22,7 +22,7 @@
               <div class="message-body">{{ form.non_field_errors }}</div>
             </article>
             {% endif %}
-            <form action="{% url 'login' %}" method="post" id>
+            <form action="{% url 'login' %}" method="post">
               {% csrf_token %}
               <div class="field">
                 {% for field in form %}
@@ -31,9 +31,12 @@
                 {% endfor %}
               </div>
               <div class="field">
-                <input type="submit" class="button is-primary" value="Login" />
+                <input type="submit" class="button is-primary" value="&nbsp;&nbsp;Login&nbsp;&nbsp;" />
                 <a href="{% url 'register' %}" class="button is-link">Register</a>
                 <input type="hidden" name="next" value="{{ request.GET.next }}" />
+              </div>
+              <div class="field">
+                <a href="{% url 'password_reset' %}" class="is-link help">Reset Password</a>
               </div>
             </form>
           </div>

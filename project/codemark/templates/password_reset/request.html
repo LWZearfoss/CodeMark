@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% block title %} Reset Password {% endblock %}
+{% block content %}
+<section class="hero is-fullheight">
+  <div class="hero-body">
+    <div class="container">
+      <div class="columns is-multiline is-centered">
+        <div class="column is-5 has-text-centered">
+          <h3 class="title has-text-centered">Reset Password</h3>
+        </div>
+      </div>
+      <div class="columns is-multiline is-centered">
+        <div class="column is-5">
+          <div class="box">
+            <form method="post">
+              {% csrf_token %}
+              <div class="field">
+                {% for field in form %}
+                <label class="label">{{ field.label_tag }}</label>
+                <div class="control">{{ field|add_class:'input' }}</div>
+                {% endfor %}
+              </div>
+              <div class="field">
+                <input type="submit" class="button is-primary" value="Send" />
+                <a href="{% url 'login' %}" class="button is-link">Back</a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+</section>
+{% endblock %}

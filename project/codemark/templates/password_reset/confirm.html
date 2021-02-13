@@ -1,19 +1,20 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% load widget_tweaks %}
-{% block title %} Register {% endblock %}
+{% block title %} Reset Password {% endblock %}
 {% block content %}
-<section class="hero is-fullheight">
+<section class="hero has-text-centered is-fullheight">
   <div class="hero-body">
     <div class="container">
+      {% if validlink %}
       <div class="columns is-multiline is-centered">
         <div class="column is-5-tablet is-5-desktop is-5-widescreen has-text-centered">
-          <h3 class="title has-text-centered">Register</h3>
+          <h3 class="title has-text-centered">Reset Password</h3>
         </div>
       </div>
       <div class="columns is-multiline is-centered">
         <div class="column is-5">
           <div class="box">
-            <form action="{% url 'register' %}" method="post">
+            <form method="post">
               {% csrf_token %}
               <div class="field">
                 {% for field in form %}
@@ -33,14 +34,27 @@
                   {% endfor %}
               </div>
               <div class="field">
-                <input type="submit" class="button is-primary" value="Register" />
+                <input type="submit" class="button is-primary" value="Reset" />
                 <a href="{% url 'login' %}" class="button is-link">Back</a>
               </div>
             </form>
           </div>
         </div>
       </div>
+      {% else %}
+      <div class="columns is-multiline is-centered">
+        <div class="column is-5">
+          <div class="notification is-danger is-light my-1">
+            <strong>Invalid Link!</strong>
+            <br></br>
+            The password reset link was invalid, possibly because it has already been used.
+            Please request a new password reset.
+          </div>
+          <a href="{% url 'login' %}" class="button is-danger is-fullwidth">Back</a>
+        </div>
+      </div>
     </div>
+    {% endif %}
   </div>
   </div>
 </section>
