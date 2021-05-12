@@ -1,0 +1,62 @@
+{% extends "codemark/base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+{% block title %} Edit Class {% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div class="columns is-centered is-multiline">
+      <div class="column is-half has-text-centered">
+        <h3 class="title has-text-centered">Edit Class</h3>
+      </div>
+    </div>
+    <div class="columns is-centered is-multiline">
+      <div class="column box is-half">
+        <form method="post">
+          {% csrf_token %}
+          {% for field in form %}
+          <div class="field">
+            <label class="label">{{ field.label_tag }}</label>
+            {% if field.errors %}
+            <div class="control select is-multiple">
+              {{ field|add_class:'input is-danger' }}
+            </div>
+            {% for error in field.errors %}
+            <p class="help is-danger">{{ error }}</p>
+            {% endfor %}
+            {% else %}
+            <div class="control select is-multiple is-fullwidth">
+              {{ field|add_class:'input' }}
+            </div>
+            {% endif %}
+          </div>
+          {% endfor %}
+          <div class="field">
+            <input class="button is-primary is-fullwidth" type="submit" value="Save">
+            <script src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
+            {{ form.media }}
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  var change_button = document.getElementById('change_id_assignments');
+  var assignment_select = document.getElementById('id_assignments');
+  var change_button_display = change_button.style.display;
+
+  change_button.style.display = 'none';
+
+  assignment_select.onchange = function () {
+    if (Array.from(assignment_select.selectedOptions).map(option => option.index).length == 1) {
+      change_button.style.display = change_button_display;
+    } else {
+      change_button.style.display = 'none';
+    }
+  };
+</script>
+{% endblock %}

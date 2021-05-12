@@ -1,0 +1,102 @@
+{% extends view.is_popup|yesno:"base.html,codemark/base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+{% block title %} Edit Assignment {% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div class="columns is-centered is-multiline">
+      <div class="column is-half has-text-centered">
+        <h3 class="title has-text-centered">Edit Assignment</h3>
+      </div>
+    </div>
+    <div class="columns is-centered is-multiline">
+      <div class="column m-3 box is-half">
+        <form method="post">
+          {% csrf_token %}
+          {{ form.non_field_errors }}
+          {% for field in form.hidden_fields %}
+          {{ field }}
+          {% endfor %}
+          {% for field in form.visible_fields %}
+          <div class="field">
+            <label class="label">{{ field.label_tag }}</label>
+            {% if field.errors %}
+            <div class="control">
+              {{ field|add_class:'input is-danger' }}
+            </div>
+            {% for error in field.errors %}
+            <p class="help is-danger">{{ error }}</p>
+            {% endfor %}
+            {% else %}
+            {% if field|field_type == 'modelmultiplechoicefield' %}
+            <div class="control select is-multiple is-fullwidth">
+              {{ field|add_class:'input' }}
+            </div>
+            {% else %}
+            <div class="control">
+              {{ field|add_class:'input' }}
+            </div>
+            {% endif %}
+            {% endif %}
+          </div>
+          {% endfor %}
+          <div class="field is-grouped is-expanded is-fullwidth">
+            <div class="control is-expanded">
+              <input class="button is-primary is-fullwidth" type="submit" value="Save">
+            </div>
+            {% if object %}
+            <div class="control is-expanded">
+              <input class="button is-warning is-fullwidth" type="submit"
+                formaction="{% url 'assignment_create' %}?_popup=1" value="Copy">
+            </div>
+            <div class="control is-expanded">
+              <input class="button is-danger is-fullwidth" type="submit"
+                formaction="{% url 'assignment_delete' pk=object.pk %}?_popup=1" value="Delete">
+            </div>
+            {% endif %}
+          </div>
+          <script src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
+          {{ form.media }}
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<link href="https://cdn.jsdelivr.net/npm/bulma-calendar@6.1.0/dist/css/bulma-calendar.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bulma-calendar@6.1.0/dist/js/bulma-calendar.min.js"></script>
+
+<script>
+  var query = '[id*="deadline"]'
+  document.querySelectorAll(query).forEach((element) => {
+    let date_time = element.value.split(' ');
+    element.setAttribute('data-start-date', date_time[0]);
+    element.setAttribute('data-start-time', date_time[1]);
+  });
+
+  // Initialize all input of type date
+  var calendars = bulmaCalendar.attach(query, {
+    showHeader: false,
+    minDate: new Date()
+  });
+</script>
+
+<script>
+  var change_button = document.getElementById('change_id_levels');
+  var level_select = document.getElementById('id_levels');
+  var change_button_display = change_button.style.display;
+
+  change_button.style.display = 'none';
+
+  level_select.onchange = function () {
+    if (Array.from(level_select.selectedOptions).map(option => option.index).length == 1) {
+      change_button.style.display = change_button_display;
+    } else {
+      change_button.style.display = 'none';
+    }
+  };
+</script>
+{% endblock %}

@@ -242,3 +242,14 @@ Temporary Items
 
 # Project configuration JSON
 config.json
+
+# Private key JSON
+key.json
+
+# PostgreSQL Database Folder
+data
+
+# Database migrations
+**/migrations/**
+!**/migrations
+!**/migrations/__init__.py

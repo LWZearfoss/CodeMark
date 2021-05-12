@@ -1,11 +1,84 @@
 {% extends "codemark/base.html" %}
+{% load widget_tweaks %}
 {% block title %} CodeMark {% endblock %}
 {% block content %}
 <section class="section">
   <div class="container">
-    <h1 class="title">
-      Hello {{ request.user }}
-    </h1>
+    <div class="columns is-centered is-multiline">
+      <div class="column is-half has-text-centered">
+        <h3 class="title has-text-centered">CodeMark</h3>
+      </div>
+    </div>
+    {% if instructed_classes %}
+    <div class="columns is-multiline is-centered m-3">
+      <div class="column box is-half">
+        <aside class="menu">
+          <p class="menu-label">
+            Instructed Classes
+          </p>
+          {% for class in instructed_classes %}
+          <ul class="menu-list">
+            <div class="field has-addons">
+              <li class="control is-expanded"><a href="{% url 'class' class_pk=class.pk %}"><b>{{ class }}</b></a></li>
+            </div>
+          </ul>
+          </ul>
+          {% endfor %}
+        </aside>
+      </div>
+    </div>
+    {% endif %}
+    {% if taken_classes %}
+    <div class="columns is-multiline is-centered m-3">
+      <div class="column box is-half">
+        <aside class="menu">
+          <p class="menu-label">
+            Taken Classes
+          </p>
+          {% for class in taken_classes %}
+          <ul class="menu-list">
+            <div class="field has-addons">
+              <li class="control is-expanded"><a href="{% url 'class' class_pk=class.pk %}"><b>{{ class }}</b></a></li>
+              <a class="control button is-small is-danger is-inverted my-1 mx-0 is-right is-pulled-right"
+                href="{% url 'unenroll' class_pk=class.pk %}">Unenroll</a>
+            </div>
+          </ul>
+          </ul>
+          {% endfor %}
+        </aside>
+      </div>
+    </div>
+    {% endif %}
+
+    <div class="columns is-multiline is-centered m-3">
+      <div class="column box is-half">
+        <p class="menu-label">
+          Enroll in Class
+        </p>
+        <form action="{% url 'enroll' %}" method="post">
+          {% csrf_token %}
+          {% for field in form %}
+          <div class="field has-addons">
+            {% if field.errors %}
+            <div class="control is-expanded">
+              {{ field|add_class:'input is-danger' }}
+            </div>
+            {% for error in field.errors %}
+            <li class="help is-danger">{{ error }}</li>
+            {% endfor %}
+            {% else %}
+            <div class="control is-expanded">
+              {{ field|add_class:'input' }}
+            </div>
+            {% endif %}
+          </div>
+          {% endfor %}
+          <div class="control">
+            <input type="submit" class="button is-primary is-fullwidth" value="Enroll" />
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </section>
 {% endblock %}

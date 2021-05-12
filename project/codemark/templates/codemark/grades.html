@@ -1,0 +1,79 @@
+{% extends "codemark/base.html" %}
+{% load filter %}
+{% block title %} {{ class }} {% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div class="columns is-multiline is-centered">
+      <div class="column is-three-quarters has-text-centered">
+        <h3 class="title has-text-centered">{{ class }}</h3>
+      </div>
+    </div>
+    <div class="columns is-multiline is-centered">
+      {% for assignment in class.assignments.all %}
+      <div class="column box is-three-quarters has-text-centered">
+        <div class="tags has-addons is-centered">
+          <span class="tag">{{ assignment }}</span>
+          <a href="{% url 'download_grades' class_pk=class.pk assignment_pk=assignment.pk %}" download class="tag is-link" style="white-space: pre-wrap;">Download CSV</a>
+          <a href="{% url 'assignment_update' pk=assignment.pk %}" class="tag is-primary" style="white-space: pre-wrap;">Edit Assignment</a>
+          <a href="{% url 'plagiarism' class_pk=class.pk assignment_pk=assignment.pk %}" class="tag is-warning" style="white-space: pre-wrap;">Check Plagiarism</a>
+          <a href="{% url 'run_assignment' class_pk=class.pk assignment_pk=assignment.pk %}" class="tag is-danger" style="white-space: pre-wrap;">Rerun Submissions</a>
+          
+        </div>
+        <div class="table-container">
+          <table class="table is-fullwidth is-narrow">
+            <thead>
+              <tr class="is-selected">
+                <th class="is-vcentered">Last Name</th>
+                <th class="is-vcentered">First Name</th>
+                <th class="is-vcentered">Username</th>
+                <th class="is-vcentered">Student ID</th>
+                <th class="is-vcentered">Last Access</th>
+                <th class="is-vcentered">Grade [Total Pts: {{ assignment.total_points }}] </th>
+                <th class="is-vcentered">Submissions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for student in class.students.all %}
+              <tr>
+                <th class="is-vcentered">
+                  {{ student.last_name }}
+                </th>
+                <th class="is-vcentered">
+                  {{ student.first_name }}
+                </th>
+                <th class="is-vcentered">
+                  {{ student.username }}
+                </th>
+                <th class="is-vcentered">
+                  {{ student.school_id }}
+                </th>
+                <th class="is-vcentered">
+                  {{ assignment.submission_set.all|submitted_in:class|submitted_by:student|latest|timestamp|date:'m/d-h:iA' }}
+                </th>
+                <th class="is-vcentered">
+                  {{ assignment.submission_set.all|submitted_in:class|submitted_by:student|latest|grade }}
+                </th>
+                <th class="is-vcentered">
+                  <div class="select is-primary">
+                    <select onchange="location = this.options[this.selectedIndex].value;"
+                      onfocus="this.selectedIndex = -1;">
+                      {% for submission in assignment.submission_set.all|submitted_in:class|submitted_by:student %}
+                      <option value="{% url 'submission' submission_pk=submission.pk %}">
+                        {{ submission.timestamp|date:'m/d-h:iA' }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </th>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      {% endfor %}
+
+    </div>
+  </div>
+</section>
+{% endblock %}

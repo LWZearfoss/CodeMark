@@ -6,12 +6,12 @@
   <div class="hero-body">
     <div class="container">
       <div class="columns is-multiline is-centered">
-        <div class="column is-5 has-text-centered">
+        <div class="column is-half has-text-centered">
           <h3 class="title has-text-centered">Login</h3>
         </div>
       </div>
       <div class="columns is-multiline is-centered">
-        <div class="column is-5">
+        <div class="column is-half">
           <div class="box">
             {% if form.non_field_errors %}
             <article class="message is-danger" id="errors">
@@ -24,12 +24,13 @@
             {% endif %}
             <form action="{% url 'login' %}" method="post">
               {% csrf_token %}
+              {% for field in form %}
               <div class="field">
-                {% for field in form %}
+
                 <label class="label">{{ field.label_tag }}</label>
                 <div class="control">{{ field|add_class:'input' }}</div>
-                {% endfor %}
               </div>
+              {% endfor %}
               <div class="field">
                 <input type="submit" class="button is-primary" value="&nbsp;&nbsp;Login&nbsp;&nbsp;" />
                 <a href="{% url 'register' %}" class="button is-link">Register</a>

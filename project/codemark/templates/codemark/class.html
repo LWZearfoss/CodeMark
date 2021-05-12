@@ -1,0 +1,93 @@
+{% extends "codemark/base.html" %}
+{% load filter %}
+{% block title %} {{ class }} {% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div class="columns is-multiline is-centered">
+      <div class="column is-three-quarters has-text-centered">
+        <h3 class="title has-text-centered">{{ class }}</h3>
+      </div>
+    </div>
+    <div class="columns is-multiline is-centered">
+      <div class="column box is-three-quarters">
+        <div class="table-container">
+          <table class="table is-fullwidth is-narrow">
+            <thead>
+              <tr class="is-selected">
+                <th class="is-vcentered">Submit</th>
+                <th class="is-vcentered">Assignment</th>
+                <th class="is-vcentered">Due Deadline</th>
+                <th class="is-vcentered">Late Due Deadline</th>
+                <th class="is-vcentered">Required Files</th>
+                <th class="is-vcentered">Submissions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for assignment in class.assignments.all %}
+              <tr>
+                <th class="is-vcentered">
+                  {% if assignment|submittable:request.user %}
+                  <a class="button is-small is-link is-inverted"
+                    href="{% url 'submit' class_pk=class.pk assignment_pk=assignment.pk%}">Submit
+                    Assignment
+                  </a>
+                  {% else %}
+                  <a class="button is-small is-link is-inverted" disabled>
+                    Submit Assignment
+                  </a>
+                  {% endif %}
+                </th>
+                <th class="is-vcentered">{{ assignment.name }}</th>
+                <th class="is-vcentered">{{ assignment.deadline|date:'m/d-h:iA' }}
+                  {% if not assignment.past_due %}
+                  ({{ assignment.due_delta|smooth_timedelta }})
+                  {% endif %}
+                </th>
+                <th class="is-vcentered">{{ assignment.late_deadline|date:'m/d-h:iA' }}
+                  {% if not assignment.past_late_due %}
+                  ({{ assignment.late_due_delta|smooth_timedelta }})
+                  {% endif %}
+                </th>
+                <th class="is-vcentered">
+                  {% for file in assignment.submission_files.files.all %}
+                  {{ file }}&nbsp;
+                  {% endfor %}
+                </th>
+                <th class="is-vcentered">
+                  <div class="select is-primary">
+                    <select onchange="location = this.options[this.selectedIndex].value;"
+                      onfocus="this.selectedIndex = -1;">
+                      {% for submission in assignment.submission_set.all|submitted_in:class|submitted_by:request.user %}
+                      <option value="{% url 'submission' submission_pk=submission.pk %}">
+                        {{ submission.timestamp|date:'m/d-h:iA' }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </th>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      {% if request.user in class.instructors.all %}
+      <div class="column box is-three-quarters">
+        <div class="field is-grouped is-expanded is-fullwidth">
+          <div class="control is-expanded">
+            <a class="button is-primary is-fullwidth" href="{% url 'class_assignments_update' pk=class.pk %}">
+              Edit Class
+            </a>
+          </div>
+          <div class="control is-expanded">
+            <a class="button is-info is-fullwidth" href="{% url 'grades' class_pk=class.pk %}">
+              View Grades
+            </a>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -10,15 +10,16 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
+from google.oauth2 import service_account
+import json
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Load JSON settings file
-import json
 with open(str(BASE_DIR) + '/' + 'config.json') as config_file:
-  config = json.load(config_file)
+    config = json.load(config_file)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
@@ -40,6 +41,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'channels',
+    'phonenumber_field',
+    'polymorphic',
+    'django_addanother',
     'widget_tweaks',
     'verify_email',
     'codemark',
@@ -53,6 +58,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'project.middleware.TimezoneMiddleware'
 ]
 
 ROOT_URLCONF = 'project.urls'
@@ -81,8 +87,12 @@ WSGI_APPLICATION = 'project.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER': 'postgres',
+        'PASSWORD': 'postgres',
+        'HOST': 'db',
+        'PORT': 5432,
     }
 }
 
@@ -140,7 +150,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = config['EMAIL_HOST']
 EMAIL_PORT = config['EMAIL_PORT']
 EMAIL_HOST_USER = config['EMAIL_HOST_USER']
-EMAIL_HOST_PASSWORD = config['EMAIL_HOST_PASSWORD']  # os.environ['password_key'] suggested
+# os.environ['password_key'] suggested
+EMAIL_HOST_PASSWORD = config['EMAIL_HOST_PASSWORD']
 EMAIL_USE_TLS = config['EMAIL_USE_TLS']
 
 # Default Email for Account Activation
@@ -161,3 +172,34 @@ VERIFICATION_FAILED_TEMPLATE = 'activation/failed.html'
 
 VERIFICATION_SUCCESS_MSG = 'Your email has been successfully verified and your account has been activated. You may now log in with your credentials.'
 VERIFICATION_FAILED_MSG = 'Something went wrong with this link. Email verification has failed and the account cannot be activated.'
+
+# Celery Configuration
+
+CELERY_BROKER_URL = 'redis://redis:6379/0'
+CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Africa/Nairobi'
+
+# Google Cloud Storage
+
+DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
+GS_BUCKET_NAME = config['GS_BUCKET_NAME']
+GS_CREDENTIALS = service_account.Credentials.from_service_account_file(
+    config['GS_CREDENTIALS']
+)
+
+# Channels
+ASGI_APPLICATION = 'codemark.asgi.application'
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('redis', 6379)],
+        },
+    },
+}
+
+# Stanford MOSS
+MOSS_ID = config['MOSS_ID']

@@ -19,7 +19,10 @@
       "EMAIL_HOST_USER": "FAKE_SMTP_USER",
       "EMAIL_HOST_PASSWORD": "FAKE_SMTP_PASSWORD",
       "EMAIL_USE_TLS": "True",
-      "DEFAULT_FROM_EMAIL": "FAKE_SMTP_USER@FAKE_SMTP_HOST.com"
+      "DEFAULT_FROM_EMAIL": "FAKE_SMTP_USER@FAKE_SMTP_HOST.com",
+      "GS_BUCKET_NAME": "FAKE_BUCKET_NAME",
+      "GS_CREDENTIALS": "/code/project/key.json",
+      "MOSS_ID": "987654321"
     }
     ```
 

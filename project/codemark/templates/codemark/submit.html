@@ -1,0 +1,49 @@
+{% extends "codemark/base.html" %}
+{% load widget_tweaks %}
+{% block title %} Submit Assignment {% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div class="columns is-centered is-multiline">
+      <div class="column is-half has-text-centered">
+        <h3 class="title has-text-centered">Submit</h3>
+      </div>
+    </div>
+    <div class="columns is-centered is-multiline">
+      <div class="column m-3 box is-half">
+        {% if assignment.submission_files %}
+        <form action="{% url 'submit' class_pk=class.pk assignment_pk=assignment.pk %}" method="post"
+          enctype="multipart/form-data">
+          {% csrf_token %}
+          {{ formset.management_form }}
+          {% for form in formset %}
+          {% for field in form %}
+          <div class="field">
+            <label class="label">{{ field.label_tag }}</label>
+            {% if field.errors %}
+            <div class="control">
+              {{ field|add_class:'input is-danger'|attr:'required' }}
+            </div>
+            {% for error in field.errors %}
+            <p class="help is-danger">{{ error }}</p>
+            {% endfor %}
+            {% else %}
+            <div class="control">
+              {{ field|add_class:'input'|attr:'required' }}
+            </div>
+            {% endif %}
+          </div>
+          {% endfor %}
+          {% endfor %}
+          <div class="field">
+            <div class="control">
+              <input type="submit" class="button is-primary is-fullwidth" value="Submit" />
+            </div>
+          </div>
+        </form>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

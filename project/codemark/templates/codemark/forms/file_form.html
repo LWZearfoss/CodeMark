@@ -1,0 +1,56 @@
+{% extends view.is_popup|yesno:"base.html,codemark/base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+{% block title %} Edit File {% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div class="columns is-centered is-multiline">
+      <div class="column is-half has-text-centered">
+        <h3 class="title has-text-centered">Edit File</h3>
+      </div>
+    </div>
+    <div class="columns is-centered is-multiline">
+      <div class="column m-3 box is-half">
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          {% for field in form.hidden_fields %}
+          {{ field }}
+          {% endfor %}
+          {% for field in form.visible_fields %}
+          <div class="field">
+            <label class="label">{{ field.label_tag }}</label>
+            {% if field.errors %}
+            <div class="control">
+              {{ field|add_class:'input is-danger' }}
+            </div>
+            {% for error in field.errors %}
+            <p class="help is-danger">{{ error }}</p>
+            {% endfor %}
+            {% else %}
+            <div class="control">
+              {{ field|add_class:'input' }}
+            </div>
+            {% endif %}
+          </div>
+          {% endfor %}
+          <div class="field is-grouped is-expanded is-fullwidth">
+            <div class="control is-expanded">
+              <input class="button is-primary is-fullwidth" type="submit" value="Save">
+            </div>
+            {% if object %}
+            <div class="control is-expanded">
+              <input class="button is-danger is-fullwidth" type="submit"
+                formaction="{% url 'file_delete' pk=object.pk %}?_popup=1" value="Delete">
+            </div>
+            {% endif %}
+          </div>
+          <script src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
+          {{ form.media }}
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+

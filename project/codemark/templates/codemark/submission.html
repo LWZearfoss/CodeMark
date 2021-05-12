@@ -1,0 +1,195 @@
+{% extends "codemark/base.html" %}
+{% load filter %}
+{% load static %}
+{% block title %} {{ submission }} {% endblock %}
+{% block content %}
+<section class="section" id="submission">
+  <div class="container">
+    {% verbatim %}
+    <div class="pageloader is-bottom-to-top" v-bind:class="{ 'is-active' : result == null}"><span
+        class="title">Loading</span></div>
+    <div v-if="result && result.level_outputs.length > 0">
+      <div class="columns is-multiline is-centered m-6" v-for="level in result.level_outputs">
+        <div class="column content is-three-quarters">
+          <h1 class="has-text-centered">{{ level.name }}</h1>
+          <div v-for="step in level.step_outputs" class="mt-6">
+            <article class="panel" v-if="step.resourcetype == 'RunStepOutput'">
+              <div class="panel-heading p-2">
+                <div class="tags has-addons is-centered">
+                  <span class="tag">{{ step.name }}</span>
+                  <span class="tag is-link" style="white-space: pre-wrap;">Run Step</span>
+                  <span class="tag is-danger" style="white-space: pre-wrap;" v-if="step.hidden">Hidden</span>
+                </div>
+              </div>
+              <div class="panel-block p-3" v-if="step.stdout == null && step.stderr == null">
+                <progress class="progress is-large is-info" max="100"></progress>
+              </div>
+              <div class="panel-block p-0" v-else-if="step.timed_out">
+                <div class="control is-fullwidth">
+                  <div class="notification is-danger m-1 p-2">Timed Out</div>
+                </div>
+              </div>
+              <div v-else>
+                <div class="panel-block p-0" style="white-space: pre-wrap;" v-if="step.stdout">
+                  <div class="control is-fullwidth">
+                    <div class="notification is-success m-1 p-2" style="overflow: auto; max-height: 50vh;">{{ step.stdout }}</div>
+                  </div>
+                </div>
+                <div class="panel-block p-0" style="white-space: pre-wrap;" v-if="step.stderr">
+                  <div class="control is-fullwidth">
+                    <div class="notification is-danger m-1 p-2" style="overflow: auto; max-height: 50vh;">{{ step.stderr }}</div>
+                  </div>
+                </div>
+              </div>
+            </article>
+            <article class="panel" v-else-if="step.resourcetype == 'TestStepOutput'">
+              <div class="panel-heading p-2 m-0 field is-grouped is-grouped-centered">
+                <div class="control" v-if="step.expected_html && step.actual_html">
+                  <p>Expected</p>
+                </div>
+                <div class="control">
+                  <div class="tags has-addons is-centered">
+                    <span class="tag">{{ step.name }}</span>
+                    <span class="tag is-link" style="white-space: pre-wrap;">Test Step</span>
+                    <span class="tag is-danger" style="white-space: pre-wrap;" v-if="step.hidden">Hidden</span>
+                  </div>
+                </div>
+                <div class="control" v-if="step.expected_html && step.actual_html">
+                  <p>Actual</p>
+                </div>
+              </div>
+              <div class="panel-block p-3" v-if="step.expected_html == null && step.actual_html == null && !step.timed_out">
+                <progress class="progress is-large is-info" max="100"></progress>
+              </div>
+              <div class="panel-block p-0" v-else-if="step.timed_out">
+                <div class="control is-fullwidth">
+                  <div class="notification is-danger m-1 p-2">Timed Out</div>
+                </div>
+              </div>
+              <div class="panel-block p-0 is-align-items-stretch" style="white-space: pre-wrap;"
+                v-else-if="step.actual_html && !step.expected_html">
+                <div class="control is-fullwidth">
+                  <div class="notification is-success m-1 p-2" style="overflow: auto; max-height: 50vh;" v-html="step.actual_html"></div>
+                </div>
+              </div>
+              <div class="panel-block p-0 is-align-items-stretch" style="white-space: pre-wrap;" v-else>
+                <div class="control is-fullwidth">
+                  <div class="notification m-1 p-2" style="overflow: auto; max-height: 50vh;" v-html="step.expected_html"></div>
+                </div>
+                <div class="control is-fullwidth">
+                  <div class="notification m-1 p-2" style="overflow: auto; max-height: 50vh;" v-html="step.actual_html"></div>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="columns is-multiline is-centered m-6" v-else-if="result">
+        <div class="column content is-three-quarters">
+          <h1 class="has-text-centered">There are no posted tests for this assignment.</h1>
+        </div>
+    </div>
+    {% endverbatim %}
+    {% if request.user in submission.enrolled_class.instructors.all %}
+    <div class="columns is-multiline is-centered m-6">
+      <div class="column box is-three-quarters">
+        <div class="field is-grouped is-expanded is-fullwidth">
+          <div class="control is-expanded">
+            <a class="button is-danger is-fullwidth" href="{% url 'run_submission' submission_pk=submission.pk %}">
+              Rerun Submission
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.12"></script>
+<script src="{% static 'js/diff.js' %}"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma-pageloader@0.3.0/dist/css/bulma-pageloader.min.css">
+
+<script>
+  submission = new Vue({
+    el: '#submission',
+    data() {
+      return {
+        result: null
+      }
+    },
+    created() {
+      this.connect();
+    },
+    watch: {
+      result: function (val) {
+        this.difference(val);
+      }
+    },
+    methods: {
+      async connect() {
+        this.socket = new WebSocket((window.location.protocol == "https:" ? "wss" : "ws") + "://" + window
+          .location.host + "/ws/submission/{{ submission.pk }}/");
+        this.socket.onopen = () => {
+          this.socket.onmessage = (message) => {
+            this.result = JSON.parse(message.data);
+          };
+        };
+        this.socket.onclose = (e) => {
+          setTimeout(function () {
+            submission.connect();
+          }, 1000);
+        }
+      },
+      difference(result) {
+        for (level of result.level_outputs) {
+          for (step of level.step_outputs) {
+            if (step.resourcetype == 'TestStepOutput' && step.expected_output && step.actual_output) {
+              let diff;
+              let expected_html = '';
+              let actual_html = '';
+              if (step.strip_whitespace) {
+                diff = window.diff.diffLines(step.expected_output.trim(), step.actual_output.trim(), {
+                  ignoreCase: step.ignore_case,
+                  newlineIsToken: true,
+                });
+              } else {
+                diff = window.diff.diffLines(step.expected_output, step.actual_output, {
+                  ignoreCase: step.ignore_case,
+                  newlineIsToken: true,
+                });
+              }
+              if (diff.length == 1) {
+                actual_html = diff[0].value;
+              } else {
+                diff.forEach((part) => {
+                  if (part.added) {
+                    actual_html +=
+                      `<mark style="background-color:hsl(141, 53%, 53%);">${part.value}</mark>`;
+                  } else if (part.removed) {
+                    expected_html +=
+                      `<mark style="background-color:hsl(348, 100%, 61%);">${part.value}</mark>`;
+                  } else {
+                    actual_html += part.value;
+                    expected_html += part.value;
+                  }
+                });
+              }
+              step.expected_html = expected_html;
+              step.actual_html = actual_html;
+            }
+          }
+        }
+      }
+    },
+  })
+</script>
+
+
+<script>
+</script>
+{% endblock %}

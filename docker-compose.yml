@@ -1,10 +1,43 @@
 version: "3"
 
 services:
-   web:
-      build: .
-      volumes:
-         - .:/code
-      ports:
-         - 8000:8000
-      command: python /code/project/manage.py runserver 0.0.0.0:8000
+  web:
+    build: .
+    volumes:
+      - .:/code
+      - /tmp:/tmp
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 8000:8000
+    links:
+      - redis:redis
+    command: python /code/project/manage.py runserver 0.0.0.0:8000
+    depends_on:
+      - redis
+      - db
+  celery:
+    build: .
+    volumes:
+      - .:/code
+      - /tmp:/tmp
+      - /var/run/docker.sock:/var/run/docker.sock
+    links:
+      - redis:redis
+    command: celery -A project worker -l INFO
+    depends_on:
+      - web
+      - redis
+      - db
+    working_dir: /code/project
+  redis:
+    image: redis
+    expose:
+      - 6379
+  db:
+    image: postgres
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
