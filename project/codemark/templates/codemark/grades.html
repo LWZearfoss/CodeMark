@@ -14,11 +14,15 @@
       <div class="column box is-three-quarters has-text-centered">
         <div class="tags has-addons is-centered">
           <span class="tag">{{ assignment }}</span>
-          <a href="{% url 'download_grades' class_pk=class.pk assignment_pk=assignment.pk %}" download class="tag is-link" style="white-space: pre-wrap;">Download CSV</a>
-          <a href="{% url 'assignment_update' pk=assignment.pk %}" class="tag is-primary" style="white-space: pre-wrap;">Edit Assignment</a>
-          <a href="{% url 'plagiarism' class_pk=class.pk assignment_pk=assignment.pk %}" class="tag is-warning" style="white-space: pre-wrap;">Check Plagiarism</a>
-          <a href="{% url 'run_assignment' class_pk=class.pk assignment_pk=assignment.pk %}" class="tag is-danger" style="white-space: pre-wrap;">Rerun Submissions</a>
-          
+          <a href="{% url 'download_grades' class_pk=class.pk assignment_pk=assignment.pk %}" download
+            class="tag is-link" style="white-space: pre-wrap;">Download CSV</a>
+          <a href="{% url 'assignment_update' pk=assignment.pk %}" class="tag is-primary"
+            style="white-space: pre-wrap;">Edit Assignment</a>
+          <a href="{% url 'plagiarism' class_pk=class.pk assignment_pk=assignment.pk %}" class="tag is-warning"
+            style="white-space: pre-wrap;">Check Plagiarism</a>
+          <a href="{% url 'run_assignment' class_pk=class.pk assignment_pk=assignment.pk %}" class="tag is-danger"
+            style="white-space: pre-wrap;">Rerun Submissions</a>
+
         </div>
         <div class="table-container">
           <table class="table is-fullwidth is-narrow">
@@ -56,7 +60,8 @@
                 </th>
                 <th class="is-vcentered">
                   <div class="select is-primary">
-                    <select onchange="let index = this.selectedIndex; this.selectedIndex = -1; location = this.options[index].value;"
+                    <select
+                      onchange="let index = this.selectedIndex; this.selectedIndex = -1; location = this.options[index].value;"
                       onfocus="this.selectedIndex = -1;">
                       {% for submission in assignment.submission_set.all|submitted_in:class|submitted_by:student %}
                       <option value="{% url 'submission' submission_pk=submission.pk %}">
