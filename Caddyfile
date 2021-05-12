@@ -1,0 +1,7 @@
+codemark.luke.zone {
+    reverse_proxy web:8000
+}
+
+www.codemark.luke.zone {
+    redir https://codemark.luke.zone/{uri}
+}
