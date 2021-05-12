@@ -56,7 +56,7 @@
                 </th>
                 <th class="is-vcentered">
                   <div class="select is-primary">
-                    <select onchange="location = this.options[this.selectedIndex].value;"
+                    <select onchange="let index = this.selectedIndex; this.selectedIndex = -1; location = this.options[index].value;"
                       onfocus="this.selectedIndex = -1;">
                       {% for submission in assignment.submission_set.all|submitted_in:class|submitted_by:request.user %}
                       <option value="{% url 'submission' submission_pk=submission.pk %}">
@@ -90,4 +90,11 @@
     </div>
   </div>
 </section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+window.onload=window.onpageshow= function() {
+};
+</script>
 {% endblock %}
