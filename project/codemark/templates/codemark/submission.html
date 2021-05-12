@@ -4,7 +4,7 @@
 {% block title %} {{ submission }} {% endblock %}
 {% block content %}
 <section class="section" id="submission">
-  <div class="container">
+  <div class="container" v-cloak>
     {% verbatim %}
     <div class="pageloader is-bottom-to-top" v-bind:class="{ 'is-active' : result == null}"><span
         class="title">Loading</span></div>
@@ -32,12 +32,14 @@
               <div v-else>
                 <div class="panel-block p-0" style="white-space: pre-wrap;" v-if="step.stdout">
                   <div class="control is-fullwidth">
-                    <div class="notification is-success m-1 p-2" style="overflow: auto; max-height: 50vh;">{{ step.stdout }}</div>
+                    <div class="notification is-success m-1 p-2" style="overflow: auto; max-height: 50vh;">
+                      {{ step.stdout }}</div>
                   </div>
                 </div>
                 <div class="panel-block p-0" style="white-space: pre-wrap;" v-if="step.stderr">
                   <div class="control is-fullwidth">
-                    <div class="notification is-danger m-1 p-2" style="overflow: auto; max-height: 50vh;">{{ step.stderr }}</div>
+                    <div class="notification is-danger m-1 p-2" style="overflow: auto; max-height: 50vh;">
+                      {{ step.stderr }}</div>
                   </div>
                 </div>
               </div>
@@ -58,7 +60,8 @@
                   <p>Actual</p>
                 </div>
               </div>
-              <div class="panel-block p-3" v-if="step.expected_html == null && step.actual_html == null && !step.timed_out">
+              <div class="panel-block p-3"
+                v-if="step.expected_html == null && step.actual_html == null && !step.timed_out">
                 <progress class="progress is-large is-info" max="100"></progress>
               </div>
               <div class="panel-block p-0" v-else-if="step.timed_out">
@@ -69,15 +72,18 @@
               <div class="panel-block p-0 is-align-items-stretch" style="white-space: pre-wrap;"
                 v-else-if="step.actual_html && !step.expected_html">
                 <div class="control is-fullwidth">
-                  <div class="notification is-success m-1 p-2" style="overflow: auto; max-height: 50vh;" v-html="step.actual_html"></div>
+                  <div class="notification is-success m-1 p-2" style="overflow: auto; max-height: 50vh;"
+                    v-html="step.actual_html"></div>
                 </div>
               </div>
               <div class="panel-block p-0 is-align-items-stretch" style="white-space: pre-wrap;" v-else>
                 <div class="control is-fullwidth">
-                  <div class="notification m-1 p-2" style="overflow: auto; max-height: 50vh;" v-html="step.expected_html"></div>
+                  <div class="notification m-1 p-2" style="overflow: auto; max-height: 50vh;"
+                    v-html="step.expected_html"></div>
                 </div>
                 <div class="control is-fullwidth">
-                  <div class="notification m-1 p-2" style="overflow: auto; max-height: 50vh;" v-html="step.actual_html"></div>
+                  <div class="notification m-1 p-2" style="overflow: auto; max-height: 50vh;" v-html="step.actual_html">
+                  </div>
                 </div>
               </div>
             </article>
@@ -86,9 +92,9 @@
       </div>
     </div>
     <div class="columns is-multiline is-centered m-6" v-else-if="result">
-        <div class="column content is-three-quarters">
-          <h1 class="has-text-centered">There are no posted tests for this assignment.</h1>
-        </div>
+      <div class="column content is-three-quarters">
+        <h1 class="has-text-centered">There are no posted tests for this assignment.</h1>
+      </div>
     </div>
     {% endverbatim %}
     {% if request.user in submission.enrolled_class.instructors.all %}
@@ -188,8 +194,12 @@
     },
   })
 </script>
+{% endblock %}
 
-
-<script>
-</script>
+{% block style %}
+<style>
+  [v-cloak] {
+    display: none;
+  }
+</style>
 {% endblock %}
