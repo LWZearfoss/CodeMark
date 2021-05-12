@@ -3,5 +3,5 @@ codemark.luke.zone {
 }
 
 www.codemark.luke.zone {
-    redir https://codemark.luke.zone/{uri}
+    redir https://codemark.luke.zone{uri}
 }
