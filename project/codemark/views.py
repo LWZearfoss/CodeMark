@@ -31,6 +31,9 @@ def register_view(request):
         if form.is_valid():
             send_verification_email(request, form)
             return render(request, 'activation/notify.html')
+        else:
+            context = {'form': form}
+            return render(request, 'registration/register.html', context=context)
     else:
         form = forms.RegisterForm()
         context = {'form': form}
@@ -44,6 +47,8 @@ def enroll_view(request):
         if form.is_valid():
             form.cleaned_data['selected_class'].students.add(request.user)
             return redirect('/')
+        else:
+            redirect('/')
     else:
         return redirect('/')
 
@@ -103,6 +108,10 @@ def submit_view(request, class_pk, assignment_pk):
             submission_object.save()
             trigger_run(submission_object)
             return redirect('submission', submission_pk=submission_object.pk)
+        else:
+            context = {'formset': formset, 'class': class_object,
+                       'assignment': assignment_object}
+            return render(request, 'codemark/submit.html', context=context)
     else:
         formset = SubmitFormSetFactory(filenames=files)
         context = {'formset': formset, 'class': class_object,
@@ -214,6 +223,9 @@ def plagiarism_view(request, class_pk, assignment_pk):
             dir.cleanup()
             context = {'url': url}
             return render(request, 'codemark/plagiarism.html', context)
+        else:
+            context = {'form': form}
+            return render(request, 'codemark/forms/plagiarism_form.html', context=context)
     else:
         form = forms.PlagiarismForm()
         context = {'form': form}
