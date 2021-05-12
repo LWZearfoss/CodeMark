@@ -221,8 +221,7 @@ def plagiarism_view(request, class_pk, assignment_pk):
             m.addFilesByWildcard('{0}/*'.format(dir.name))
             url = m.send()
             dir.cleanup()
-            context = {'url': url}
-            return render(request, 'codemark/plagiarism.html', context)
+            return redirect(url)
         else:
             context = {'form': form}
             return render(request, 'codemark/forms/plagiarism_form.html', context=context)
