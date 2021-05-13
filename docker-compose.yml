@@ -11,10 +11,11 @@ services:
       - 8000
     links:
       - redis:redis
-    command: python /code/project/manage.py runserver 0.0.0.0:8000
+    command: daphne -b 0.0.0.0 -p 8000 project.asgi:application
     depends_on:
       - redis
       - db
+    working_dir: /code/project
   celery:
     build: .
     volumes:

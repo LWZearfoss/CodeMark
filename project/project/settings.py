@@ -192,7 +192,7 @@ GS_CREDENTIALS = service_account.Credentials.from_service_account_file(
 )
 
 # Channels
-ASGI_APPLICATION = 'codemark.asgi.application'
+ASGI_APPLICATION = 'codemark.routing.application'
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
