@@ -154,12 +154,12 @@
               let actual_html = '<b>Actual:</b><br>';
               if (step.strip_whitespace) {
                 diff = window.diff.diffLines(step.expected_output.trim(), step.actual_output.trim(), {
-                  ignoreCase: step.ignore_case,
+                  ignoreCase: step.case_insensitive,
                   newlineIsToken: true,
                 });
               } else {
                 diff = window.diff.diffLines(step.expected_output, step.actual_output, {
-                  ignoreCase: step.ignore_case,
+                  ignoreCase: step.case_insensitive,
                   newlineIsToken: true,
                 });
               }
