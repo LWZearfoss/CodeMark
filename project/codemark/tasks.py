@@ -61,7 +61,7 @@ def execute_result(result_pk):
                 timed_out = False
                 try:
                     res = container.exec_run(
-                        step_output.command, workdir='/tmp', demux=True
+                        'bash -c "{0}"'.format(step_output.command), workdir='/tmp', demux=True
                     )
                 except TimeoutException:
                     timed_out = True
@@ -81,7 +81,7 @@ def execute_result(result_pk):
                 timed_out = False
                 try:
                     res = container.exec_run(
-                        step_output.command, workdir='/tmp'
+                        'bash -c "{0}"'.format(step_output.command), workdir='/tmp'
                     )
                 except TimeoutException:
                     timed_out = True
