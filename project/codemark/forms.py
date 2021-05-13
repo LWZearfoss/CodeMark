@@ -238,6 +238,12 @@ class RunStepForm(ModelForm):
         if user is not None:
             self.fields['creator'].initial = user
 
+    def clean(self):
+        self.cleaned_data = super(RunStepForm, self).clean()
+        self.cleaned_data['command'] = self.cleaned_data['command'].replace(
+            '\r', '')
+        return self.cleaned_data
+
     class Meta:
         model = RunStep
         fields = '__all__'
@@ -255,8 +261,10 @@ class TestStepForm(ModelForm):
 
     def clean(self):
         self.cleaned_data = super(TestStepForm, self).clean()
+        self.cleaned_data['command'] = self.cleaned_data['command'].replace(
+            '\r', '')
         self.cleaned_data['expected_output'] = self.cleaned_data['expected_output'].replace(
-            '\r\n', '\n')
+            '\r', '')
         return self.cleaned_data
 
     class Meta:

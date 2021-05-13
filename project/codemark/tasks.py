@@ -61,16 +61,16 @@ def execute_result(result_pk):
                 timed_out = False
                 try:
                     res = container.exec_run(
-                        'bash -c "{0}"'.format(step_output.command), workdir='/tmp', demux=True
+                        'bash -c "{0}"'.format(step_output.command.replace('"', '\\"')), workdir='/tmp', demux=True
                     )
                 except TimeoutException:
                     timed_out = True
                     pass
                 signal.alarm(0)
                 if res and res.output[0]:
-                    stdout = res.output[0].decode('utf-8')
+                    stdout = res.output[0].decode('utf-8', 'ignore')
                 if res and res.output[1]:
-                    stderr = res.output[1].decode('utf-8')
+                    stderr = res.output[1].decode('utf-8', 'ignore')
                 step_output.stdout = stdout
                 step_output.stderr = stderr
                 step_output.timed_out = timed_out
@@ -81,14 +81,14 @@ def execute_result(result_pk):
                 timed_out = False
                 try:
                     res = container.exec_run(
-                        'bash -c "{0}"'.format(step_output.command), workdir='/tmp'
+                        'bash -c "{0}"'.format(step_output.command.replace('"', '\\"')), workdir='/tmp'
                     )
                 except TimeoutException:
                     timed_out = True
                     pass
                 signal.alarm(0)
                 if res and res.output:
-                    actual_output = res.output.decode('utf-8')
+                    actual_output = res.output.decode('utf-8', 'ignore')
                 step_output.actual_output = actual_output
                 step_output.timed_out = timed_out
 
