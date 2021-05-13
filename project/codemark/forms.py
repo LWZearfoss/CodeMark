@@ -73,11 +73,11 @@ class ClassAssignmentsUpdateForm(ModelForm):
         user = kwargs.pop('user', None)
         super(ClassAssignmentsUpdateForm, self).__init__(*args, **kwargs)
         if user is not None:
-            self.fields['assignments'].queryset = Assignment.objects.filter(
+            self.fields['assignments'].queryset = (Assignment.objects.filter(
                 class__instructors=user
             ) | Assignment.objects.filter(
                 creator=user
-            )
+            )).distinct()
 
     class Meta:
         model = Class
@@ -97,21 +97,21 @@ class AssignmentForm(ModelForm):
         super(AssignmentForm, self).__init__(*args, **kwargs)
         if user is not None:
             self.fields['creator'].initial = user
-            self.fields['fixture'].queryset = Fixture.objects.filter(
+            self.fields['fixture'].queryset = (Fixture.objects.filter(
                 assignment__class__instructors=user
             ) | Fixture.objects.filter(
                 creator=user
-            )
-            self.fields['levels'].queryset = Level.objects.filter(
+            )).distinct()
+            self.fields['levels'].queryset = (Level.objects.filter(
                 assignment__class__instructors=user
             ) | Level.objects.filter(
                 creator=user
-            )
-            self.fields['submission_files'].queryset = FileSchema.objects.filter(
+            )).distinct()
+            self.fields['submission_files'].queryset = (FileSchema.objects.filter(
                 assignment__class__instructors=user
             ) | FileSchema.objects.filter(
                 creator=user
-            )
+            )).distinct()
 
     def clean(self):
         if self.cleaned_data['late_deadline'] and self.cleaned_data['deadline'] and self.cleaned_data['late_deadline'] < self.cleaned_data['deadline']:
@@ -148,11 +148,11 @@ class FixtureForm(ModelForm):
         super(FixtureForm, self).__init__(*args, **kwargs)
         if user is not None:
             self.fields['creator'].initial = user
-            self.fields['files'].queryset = File.objects.filter(
+            self.fields['files'].queryset = (File.objects.filter(
                 fixture__assignment__class__instructors=user
             ) | File.objects.filter(
                 creator=user
-            )
+            )).distinct()
 
     class Meta:
         model = Fixture
@@ -188,11 +188,11 @@ class LevelForm(ModelForm):
         super(LevelForm, self).__init__(*args, **kwargs)
         if user is not None:
             self.fields['creator'].initial = user
-            self.fields['steps'].queryset = Step.objects.filter(
+            self.fields['steps'].queryset = (Step.objects.filter(
                 level__assignment__class__instructors=user
             ) | Step.objects.filter(
                 creator=user
-            )
+            )).distinct()
 
     class Meta:
         model = Level
@@ -273,11 +273,11 @@ class FileSchemaForm(ModelForm):
         super(FileSchemaForm, self).__init__(*args, **kwargs)
         if user is not None:
             self.fields['creator'].initial = user
-            self.fields['files'].queryset = Text.objects.filter(
+            self.fields['files'].queryset = (Text.objects.filter(
                 fileschema__assignment__class__instructors=user
             ) | Text.objects.filter(
                 creator=user
-            )
+            )).distinct()
 
     class Meta:
         model = FileSchema
