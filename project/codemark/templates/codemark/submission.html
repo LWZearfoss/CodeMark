@@ -44,21 +44,14 @@
             </article>
             <article class="panel" v-else-if="step.resourcetype == 'TestStepOutput'">
               <div class="panel-heading p-2 m-0 field is-grouped is-grouped-centered">
-                <div class="control" v-if="step.expected_html && step.actual_html">
-                  <p>Expected</p>
-                </div>
-                <div class="control">
-                  <div class="tags has-addons is-centered">
-                    <span class="tag">{{ step.name }}</span>
-                    <span class="tag is-link" style="white-space: pre-wrap;">Test Step</span>
-                    <span class="tag is-danger" style="white-space: pre-wrap;" v-if="step.hidden">Hidden</span>
-                  </div>
-                </div>
-                <div class="control" v-if="step.expected_html && step.actual_html">
-                  <p>Actual</p>
+                <div class="tags has-addons is-centered">
+                  <span class="tag">{{ step.name }}</span>
+                  <span class="tag is-link" style="white-space: pre-wrap;">Test Step</span>
+                  <span class="tag is-danger" style="white-space: pre-wrap;" v-if="step.hidden">Hidden</span>
                 </div>
               </div>
-              <div class="panel-block p-3" v-if="step.expected_html == null && step.actual_html == null && !step.timed_out">
+              <div class="panel-block p-3"
+                v-if="step.expected_html == null && step.actual_html == null && !step.timed_out">
                 <progress class="progress is-large is-info" max="100"></progress>
               </div>
               <div class="panel-block p-0" v-else-if="step.timed_out">
@@ -69,15 +62,22 @@
               <div class="panel-block p-0 is-align-items-stretch" style="white-space: pre-wrap;"
                 v-else-if="step.actual_html && !step.expected_html">
                 <div class="control is-fullwidth">
-                  <div class="notification is-success m-1 p-2" style="overflow: auto; max-height: 50vh;" v-html="step.actual_html"></div>
+                  <div class="notification is-success m-1 p-2" style="overflow: auto; max-height: 50vh;"
+                    v-html="step.actual_html"></div>
                 </div>
               </div>
-              <div class="panel-block p-0 is-align-items-stretch" style="white-space: pre-wrap;" v-else>
-                <div class="control is-fullwidth">
-                  <div class="notification m-1 p-2" style="overflow: auto; max-height: 50vh;" v-html="step.expected_html"></div>
+              <div class="columns is-gapless" v-else>
+                <div class="column is-half">
+                  <div class="control">
+                    <div class="notification m-1 p-2" style="overflow: auto; max-height: 50vh; white-space: pre-wrap;"
+                      v-html="step.expected_html"></div>
+                  </div>
                 </div>
-                <div class="control is-fullwidth">
-                  <div class="notification m-1 p-2" style="overflow: auto; max-height: 50vh;" v-html="step.actual_html"></div>
+                <div class="column is-half">
+                  <div class="control">
+                    <div class="notification m-1 p-2" style="overflow: auto; max-height: 50vh; white-space: pre-wrap;"
+                      v-html="step.actual_html"></div>
+                  </div>
                 </div>
               </div>
             </article>
@@ -86,9 +86,9 @@
       </div>
     </div>
     <div class="columns is-multiline is-centered m-6" v-else-if="result">
-        <div class="column content is-three-quarters">
-          <h1 class="has-text-centered">There are no posted tests for this assignment.</h1>
-        </div>
+      <div class="column content is-three-quarters">
+        <h1 class="has-text-centered">There are no posted tests for this assignment.</h1>
+      </div>
     </div>
     {% endverbatim %}
     {% if request.user in submission.enrolled_class.instructors.all %}
@@ -150,8 +150,8 @@
           for (step of level.step_outputs) {
             if (step.resourcetype == 'TestStepOutput' && step.expected_output && step.actual_output) {
               let diff;
-              let expected_html = '';
-              let actual_html = '';
+              let expected_html = '<b>Expected:</b><br>';
+              let actual_html = '<b>Actual:</b><br>';
               if (step.strip_whitespace) {
                 diff = window.diff.diffLines(step.expected_output.trim(), step.actual_output.trim(), {
                   ignoreCase: step.ignore_case,
@@ -192,8 +192,8 @@
 
 {% block style %}
 <style>
-[v-cloak] {
-  display: none;
-}
+  [v-cloak] {
+    display: none;
+  }
 </style>
 {% endblock %}
