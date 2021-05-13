@@ -1,7 +1,7 @@
 version: "3"
 
 services:
-  web:
+  wsgi:
     build: .
     volumes:
       - .:/code
@@ -11,7 +11,22 @@ services:
       - 8000
     links:
       - redis:redis
-    command: daphne -b 0.0.0.0 -p 8000 project.asgi:application
+    command: gunicorn project.wsgi:application --bind 0.0.0.0:8000 --timeout 240
+    depends_on:
+      - redis
+      - db
+    working_dir: /code/project
+  asgi:
+    build: .
+    volumes:
+      - .:/code
+      - /tmp:/tmp
+      - /var/run/docker.sock:/var/run/docker.sock
+    expose:
+      - 9000
+    links:
+      - redis:redis
+    command: daphne -b 0.0.0.0 -p 9000 project.asgi:application
     depends_on:
       - redis
       - db
@@ -26,7 +41,8 @@ services:
       - redis:redis
     command: celery -A project worker -l INFO
     depends_on:
-      - web
+      - wsgi
+      - asgi
       - redis
       - db
     working_dir: /code/project
@@ -46,7 +62,8 @@ services:
     image: caddy
     restart: unless-stopped
     depends_on:
-      - web
+      - wsgi
+      - asgi
     ports:
       - 80:80
       - 443:443

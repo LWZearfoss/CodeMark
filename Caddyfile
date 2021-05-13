@@ -1,5 +1,11 @@
 codemark.luke.zone {
-    reverse_proxy web:8000
+    @notSocket {
+        not {
+            path /ws/*
+        }
+    }
+    reverse_proxy @notSocket wsgi:8000
+    reverse_proxy /ws/* asgi:9000
 }
 
 www.codemark.luke.zone {
